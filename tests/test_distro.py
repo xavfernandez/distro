@@ -52,6 +52,7 @@ class TestNonLinuxPlatform(testtools.TestCase):
 
 
 class TestCli(testtools.TestCase):
+    @testtools.skipIf(not IS_LINUX, 'Irrelevant on non-linux platforms')
     def test_cli(self):
         stdout, _ = subprocess.Popen(
             [sys.executable, '-m', 'distro'],
@@ -67,10 +68,9 @@ class DistroTestCase(testtools.TestCase):
     represented in the `DISTROS` subtree.
     """
 
+    @testtools.skipIf(not IS_LINUX, 'Irrelevant on non-linux platforms')
     def setUp(self):
         super(DistroTestCase, self).setUp()
-        if not IS_LINUX:
-            self.skipTest('Irrelevant on non-linux platforms')
         # The environment stays the same across all testcases, so we
         # save and restore the PATH env var in each test case that
         # changes it:
@@ -92,10 +92,9 @@ class DistroTestCase(testtools.TestCase):
 
 class TestOSRelease(testtools.TestCase):
 
+    @testtools.skipIf(not IS_LINUX, 'Irrelevant on non-linux platforms')
     def setUp(self):
         super(TestOSRelease, self).setUp()
-        if not IS_LINUX:
-            self.skipTest('Irrelevant on non-linux platforms')
         dist = self._testMethodName.split('_')[1]
         os_release = os.path.join(DISTROS_DIR, dist, 'etc', 'os-release')
         self.distro = distro.LinuxDistribution(False, os_release, 'non')
@@ -541,10 +540,9 @@ class TestSpecialRelease(DistroTestCase):
 
 class TestDistroRelease(testtools.TestCase):
 
+    @testtools.skipIf(not IS_LINUX, 'Irrelevant on non-linux platforms')
     def setUp(self):
         super(TestDistroRelease, self).setUp()
-        if not IS_LINUX:
-            self.skipTest('Irrelevant on non-linux platforms')
 
     def _test_outcome(self,
                       outcome,
@@ -1508,9 +1506,8 @@ class TestOSReleaseParsing(testtools.TestCase):
     """Test the parsing of os-release files.
     """
 
+    @testtools.skipIf(not IS_LINUX, 'Irrelevant on non-linux platforms')
     def setUp(self):
-        if not IS_LINUX:
-            self.skipTest('Irrelevant on non-linux platforms')
         self.distro = distro.LinuxDistribution(False, None, None)
         self.distro.debug = True
         super(TestOSReleaseParsing, self).setUp()
@@ -1675,10 +1672,9 @@ class TestGlobal(testtools.TestCase):
     arguments.
     """
 
+    @testtools.skipIf(not IS_LINUX, 'Irrelevant on non-linux platforms')
     def setUp(self):
         super(TestGlobal, self).setUp()
-        if not IS_LINUX:
-            self.skipTest('Irrelevant on non-linux platforms')
 
     def test_global(self):
         # Because the module-level functions use the module-global
@@ -1770,11 +1766,7 @@ class TestRepr(testtools.TestCase):
     """Test the __repr__() method.
     """
 
-    def setUp(self):
-        super(TestRepr, self).setUp()
-        if not IS_LINUX:
-            self.skipTest('Irrelevant on non-linux platforms')
-
+    @testtools.skipIf(not IS_LINUX, 'Irrelevant on non-linux platforms')
     def test_repr(self):
         # We test that the class name and the names of all instance attributes
         # show up in the repr() string.
