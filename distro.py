@@ -34,13 +34,10 @@ import sys
 import shlex
 import subprocess
 
-
 binary_type = str if sys.version_info[0] < 3 else bytes
-
 
 if not sys.platform.startswith('linux'):
     raise ImportError('Unsupported platform: {0}'.format(sys.platform))
-
 
 _UNIXCONFDIR = '/etc'
 _OS_RELEASE_BASENAME = 'os-release'
@@ -76,7 +73,6 @@ NORMALIZED_LSB_ID = {
 NORMALIZED_DISTRO_ID = {
     'redhat': 'rhel',  # RHEL 6.x, 7.x
 }
-
 
 # Pattern for content of distro release file (reversed)
 _DISTRO_RELEASE_CONTENT_REVERSED_PATTERN = re.compile(
@@ -590,7 +586,7 @@ class LinuxDistribution(object):
           uses an unexpected encoding.
         """
         self.os_release_file = os_release_file or \
-            os.path.join(_UNIXCONFDIR, _OS_RELEASE_BASENAME)
+                               os.path.join(_UNIXCONFDIR, _OS_RELEASE_BASENAME)
         self.distro_release_file = distro_release_file or ''  # updated later
         self._os_release_info = self._os_release_info()
         self._lsb_release_info = self._lsb_release_info() \
@@ -631,6 +627,7 @@ class LinuxDistribution(object):
 
         For details, see :func:`distro.id`.
         """
+
         def normalize(distro_id, table):
             distro_id = distro_id.lower().replace(' ', '_')
             return table.get(distro_id, distro_id)
@@ -656,11 +653,11 @@ class LinuxDistribution(object):
         For details, see :func:`distro.name`.
         """
         name = self.os_release_attr('name') \
-            or self.lsb_release_attr('distributor_id') \
-            or self.distro_release_attr('name')
+               or self.lsb_release_attr('distributor_id') \
+               or self.distro_release_attr('name')
         if pretty:
             name = self.os_release_attr('pretty_name') \
-                or self.lsb_release_attr('description')
+                   or self.lsb_release_attr('description')
             if not name:
                 name = self.distro_release_attr('name')
                 version = self.version(pretty=True)
@@ -756,9 +753,9 @@ class LinuxDistribution(object):
         For details, see :func:`distro.codename`.
         """
         return self.os_release_attr('codename') \
-            or self.lsb_release_attr('codename') \
-            or self.distro_release_attr('codename') \
-            or ''
+               or self.lsb_release_attr('codename') \
+               or self.distro_release_attr('codename') \
+               or ''
 
     def info(self, pretty=False, best=False):
         """
@@ -1052,6 +1049,16 @@ class LinuxDistribution(object):
 
 _distro = LinuxDistribution()
 
-
 if __name__ == '__main__':
-    print(info())
+    import argparse
+    import json
+
+    parser = argparse.ArgumentParser(description="Linux distro info tool")
+    parser.add_argument('--json', '-j', help="Output json instead of formatted data", action="store_true")
+    args = parser.parse_args()
+
+    if args.json:
+        print(json.dumps(info()))
+    else:
+        print(name(pretty=True))
+        print("Like: {}".format(like()))
